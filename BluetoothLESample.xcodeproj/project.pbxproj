@@ -15,6 +15,8 @@
 		0891A248156A898500F3FA13 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 0891A247156A898500F3FA13 /* AppDelegate.m */; };
 		0891A24B156A898500F3FA13 /* MainStoryboard.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 0891A249156A898500F3FA13 /* MainStoryboard.storyboard */; };
 		0891A24E156A898500F3FA13 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 0891A24D156A898500F3FA13 /* ViewController.m */; };
+		0891A255156A899100F3FA13 /* CoreBluetooth.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0891A254156A899100F3FA13 /* CoreBluetooth.framework */; };
+		0891A258156A89C600F3FA13 /* PeripheralManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 0891A257156A89C600F3FA13 /* PeripheralManager.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -22,15 +24,18 @@
 		0891A237156A898500F3FA13 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		0891A239156A898500F3FA13 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		0891A23B156A898500F3FA13 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
-		0891A23F156A898500F3FA13 /* BluetoothLESample-Info.plist */ = {isa = PBXFileReference; path = "BluetoothLESample-Info.plist"; sourceTree = "<group>"; };
+		0891A23F156A898500F3FA13 /* BluetoothLESample-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "BluetoothLESample-Info.plist"; sourceTree = "<group>"; };
 		0891A241156A898500F3FA13 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		0891A243156A898500F3FA13 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
-		0891A245156A898500F3FA13 /* BluetoothLESample-Prefix.pch */ = {isa = PBXFileReference; path = "BluetoothLESample-Prefix.pch"; sourceTree = "<group>"; };
-		0891A246156A898500F3FA13 /* AppDelegate.h */ = {isa = PBXFileReference; path = AppDelegate.h; sourceTree = "<group>"; };
+		0891A245156A898500F3FA13 /* BluetoothLESample-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "BluetoothLESample-Prefix.pch"; sourceTree = "<group>"; };
+		0891A246156A898500F3FA13 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		0891A247156A898500F3FA13 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
 		0891A24A156A898500F3FA13 /* en */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = en; path = en.lproj/MainStoryboard.storyboard; sourceTree = "<group>"; };
-		0891A24C156A898500F3FA13 /* ViewController.h */ = {isa = PBXFileReference; path = ViewController.h; sourceTree = "<group>"; };
+		0891A24C156A898500F3FA13 /* ViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ViewController.h; sourceTree = "<group>"; };
 		0891A24D156A898500F3FA13 /* ViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ViewController.m; sourceTree = "<group>"; };
+		0891A254156A899100F3FA13 /* CoreBluetooth.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreBluetooth.framework; path = System/Library/Frameworks/CoreBluetooth.framework; sourceTree = SDKROOT; };
+		0891A256156A89C600F3FA13 /* PeripheralManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PeripheralManager.h; sourceTree = "<group>"; };
+		0891A257156A89C600F3FA13 /* PeripheralManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PeripheralManager.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -38,6 +43,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				0891A255156A899100F3FA13 /* CoreBluetooth.framework in Frameworks */,
 				0891A238156A898500F3FA13 /* UIKit.framework in Frameworks */,
 				0891A23A156A898500F3FA13 /* Foundation.framework in Frameworks */,
 				0891A23C156A898500F3FA13 /* CoreGraphics.framework in Frameworks */,
@@ -67,6 +73,7 @@
 		0891A236156A898500F3FA13 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				0891A254156A899100F3FA13 /* CoreBluetooth.framework */,
 				0891A237156A898500F3FA13 /* UIKit.framework */,
 				0891A239156A898500F3FA13 /* Foundation.framework */,
 				0891A23B156A898500F3FA13 /* CoreGraphics.framework */,
@@ -82,6 +89,8 @@
 				0891A249156A898500F3FA13 /* MainStoryboard.storyboard */,
 				0891A24C156A898500F3FA13 /* ViewController.h */,
 				0891A24D156A898500F3FA13 /* ViewController.m */,
+				0891A256156A89C600F3FA13 /* PeripheralManager.h */,
+				0891A257156A89C600F3FA13 /* PeripheralManager.m */,
 				0891A23E156A898500F3FA13 /* Supporting Files */,
 			);
 			path = BluetoothLESample;
@@ -163,6 +172,7 @@
 				0891A244156A898500F3FA13 /* main.m in Sources */,
 				0891A248156A898500F3FA13 /* AppDelegate.m in Sources */,
 				0891A24E156A898500F3FA13 /* ViewController.m in Sources */,
+				0891A258156A89C600F3FA13 /* PeripheralManager.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

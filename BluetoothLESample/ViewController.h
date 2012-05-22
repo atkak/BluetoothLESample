@@ -7,7 +7,16 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "PeripheralManager.h"
 
-@interface ViewController : UIViewController
+@interface ViewController : UIViewController <PeripheralManagerDelegate>
+
+@property (weak, nonatomic) IBOutlet UILabel *label;
+@property (weak, nonatomic) IBOutlet UIButton *connectButton;
+@property (weak, nonatomic) IBOutlet UIButton *alertButton;
+@property (weak, nonatomic) IBOutlet UIButton *batteryButton;
+- (IBAction)connectButtonTouched:(id)sender;
+- (IBAction)alertButtonTouched:(id)sender;
+- (IBAction)batteryButtonTouched:(id)sender;
 
 @end
