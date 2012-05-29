@@ -39,12 +39,11 @@
     [self setAlertButton:nil];
     [self setBatteryButton:nil];
     [super viewDidUnload];
-    // Release any retained subviews of the main view.
 }
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
 {
-    return (interfaceOrientation != UIInterfaceOrientationPortraitUpsideDown);
+    return (interfaceOrientation == UIInterfaceOrientationPortrait);
 }
 
 #pragma mark - PefipheralManagerDelegate methods
@@ -72,8 +71,9 @@
     self.batteryButton.enabled = YES;
 }
 
-- (void)didCheckBattery:(int)value
+- (void)didCheckBattery:(ushort)value
 {
+    // 接続デバイスのバッテリー残量をアラートで表示
     UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"バッテリー残量" 
                                                     message:[NSString stringWithFormat:@"接続先デバイスのバッテリー残量は%d%%です", value] 
                                                    delegate:nil 
@@ -84,23 +84,29 @@
 
 #pragma mark - Handlers
 
+// 接続ボタンタップイベントハンドラ
 - (IBAction)connectButtonTouched:(id)sender
 {
     self.connectButton.enabled = NO;
     self.label.text = @"検索中";
-    
+    // Bluetoothデバイスのマネージャーを作成
     manager = [[PeripheralManager alloc] init];
     manager.delegate = self;
-    [manager scanForPeripherals];
+    // デバイスのスキャンと接続を開始
+    [manager scanForPeripheralsAndConnect];
 }
 
+// アラートボタンタップイベントハンドラ
 - (IBAction)alertButtonTouched:(id)sender
 {
+    // 接続デバイスを鳴動させる
     [manager notifyAlert];
 }
 
+// バッテリーチェックボタンタップイベントハンドラ
 - (IBAction)batteryButtonTouched:(id)sender
 {
+    // 接続デバイスのバッテリー情報を取得
     [manager checkBattery];
 }
 @end

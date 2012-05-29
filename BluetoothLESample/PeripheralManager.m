@@ -8,14 +8,18 @@
 
 #import "PeripheralManager.h"
 
-NSString *kUUIDImmediateAlert = @"1802";
-NSString *kUUIDBatteryService = @"180F";
+// サービスUUID:Immediate Alert
+NSString *kUUIDServiceImmediateAlert = @"1802";
+// サービスUUID:Battery Service
+NSString *kUUIDServiceBatteryService = @"180F";
+// キャラクタリスティックUUID:Alert Level
 NSString *kUUIDCharacteristicsAlertLevel = @"2A06";
+// キャラクタリスティックUUID:Battery Level
 NSString *kUUIDCharacteristicsBatteryLevel = @"2A19";
 
 @interface PeripheralManager () {
     CBCentralManager *centralManager;
-    CBPeripheral *targetPerpheral;
+    CBPeripheral *targetPeripheral;
     CBCharacteristic *alertLevelCharacteristic;
     CBCharacteristic *batteryLevelCharacteristic;
 }
@@ -25,36 +29,60 @@ NSString *kUUIDCharacteristicsBatteryLevel = @"2A19";
 @implementation PeripheralManager
 
 @synthesize delegate = _delegate;
-@synthesize deviceName = _deviceName;
+
+#pragma mark - Properties
+
+- (NSString *)deviceName
+{
+    if (!targetPeripheral)
+    {
+        return nil;
+    }
+    return targetPeripheral.name;
+}
+
+#pragma mark - View lifecycle methods
 
 - (id)init
 {
     self = [super init];
-    if (self) {
-        centralManager = [[CBCentralManager alloc] initWithDelegate:self queue:dispatch_get_main_queue()];
+    if (self)
+    {
+        // Bluetoothの接続マネージャーを生成
+        centralManager = [[CBCentralManager alloc] initWithDelegate:self queue:nil];
     }
     return self;
 }
 
-- (void)scanForPeripherals
+#pragma mark - Public methods
+
+- (void)scanForPeripheralsAndConnect
 {
-    NSArray *services = [NSArray arrayWithObjects:[CBUUID UUIDWithString:kUUIDImmediateAlert], 
-                         [CBUUID UUIDWithString:kUUIDBatteryService], nil];
-    [centralManager scanForPeripheralsWithServices:services options:nil];
+    // 探索対象のデバイスが持つサービスを指定
+    NSArray *services = [NSArray arrayWithObjects:[CBUUID UUIDWithString:kUUIDServiceImmediateAlert], 
+                         [CBUUID UUIDWithString:kUUIDServiceBatteryService], nil];
+    // 単一デバイスの発見イベントを重複して発行させない
+    NSDictionary *options = [NSDictionary dictionaryWithObject:[NSNumber numberWithBool:NO] 
+                                                        forKey:CBCentralManagerScanOptionAllowDuplicatesKey];
+    // デバイスの探索を開始
+    [centralManager scanForPeripheralsWithServices:services options:options];
 }
 
 - (void)notifyAlert
 {
-    int value = 2;
+    // HighAlertを指定
+    ushort value = 2;
     NSMutableData *data = [NSMutableData dataWithBytes:&value length:8];
-    [targetPerpheral writeValue:data 
+    // alertLevelの値を書き込んで、接続デバイスに通知
+    [targetPeripheral writeValue:data 
               forCharacteristic:alertLevelCharacteristic 
                            type:CBCharacteristicWriteWithoutResponse];
 }
 
 - (void)checkBattery
 {
-    [targetPerpheral readValueForCharacteristic:batteryLevelCharacteristic];
+    // 接続デバイスのバッテリー情報取得
+    [targetPeripheral readValueForCharacteristic:batteryLevelCharacteristic];
 }
 
 #pragma mark - CBCentralManagerDelegate methods
@@ -66,35 +94,28 @@ NSString *kUUIDCharacteristicsBatteryLevel = @"2A19";
 {
     NSLog(@"didDiscoverPeripheral UUID:%@ advertisementData:%@", peripheral.UUID, [advertisementData description]);
     
-    targetPerpheral = peripheral;
+    targetPeripheral = peripheral;
     peripheral.delegate = self;
     
-    if ([advertisementData.allKeys containsObject:@"kCBAdvDataLocalName"]) {
-        _deviceName = [advertisementData objectForKey:@"kCBAdvDataLocalName"];
-    }
-    
-    if (!peripheral.isConnected) {
+    // 発見されたデバイスに接続
+    if (!peripheral.isConnected)
+    {
         [centralManager connectPeripheral:peripheral options:nil];
     }
 }
-
-//- (void)centralManager:(CBCentralManager *)central 
-//didRetrievePeripherals:(NSArray *)peripherals
-//{
-//    NSLog(@"didRetrievePeripheral");
-//    
-//    [centralManager connectPeripheral:peripherals options:nil];
-//}
 
 - (void)centralManager:(CBCentralManager *)central
   didConnectPeripheral:(CBPeripheral *)peripheral
 {
     NSLog(@"didConnectPeripheral");
     
+    // 外部デバイスとの接続完了を通知
     [self.delegate didConnectPeripheral];
     
-    NSArray *services = [NSArray arrayWithObjects:[CBUUID UUIDWithString:kUUIDImmediateAlert], 
-                         [CBUUID UUIDWithString:kUUIDBatteryService], nil];
+    // 探索するサービスを指定
+    NSArray *services = [NSArray arrayWithObjects:[CBUUID UUIDWithString:kUUIDServiceImmediateAlert], 
+                         [CBUUID UUIDWithString:kUUIDServiceBatteryService], nil];
+    // サービスの探索を開始
     [peripheral discoverServices:services];
 }
 
@@ -151,22 +172,30 @@ didDisconnectPeripheral:(CBPeripheral *)peripheral
 - (void)peripheral:(CBPeripheral *)peripheral 
 didDiscoverServices:(NSError *)error
 {
-    if (error) {
+    if (error)
+    {
         NSLog(@"didDiscoverServices error: %@", error.localizedDescription);
         return;
     }
     
-    if (peripheral.services.count == 0) {
+    if (peripheral.services.count == 0)
+    {
         NSLog(@"didDiscoverServices no services");
         return;
     }
     
     NSLog(@"didDiscoverServices services:%@", [peripheral.services description]);
     
-    for (CBService *service in peripheral.services) {
-        if ([service.UUID isEqual:[CBUUID UUIDWithString:kUUIDImmediateAlert]]) {
+    for (CBService *service in peripheral.services)
+    {
+        if ([service.UUID isEqual:[CBUUID UUIDWithString:kUUIDServiceImmediateAlert]])
+        {
+            // Immediate Alertサービスを発見した場合、Alert Levelキャラクタリスティックの探索を開始
             [peripheral discoverCharacteristics:[NSArray arrayWithObjects:[CBUUID UUIDWithString:kUUIDCharacteristicsAlertLevel], nil] forService:service];
-        } else if ([service.UUID isEqual:[CBUUID UUIDWithString:kUUIDBatteryService]]) {
+        }
+        else if ([service.UUID isEqual:[CBUUID UUIDWithString:kUUIDServiceBatteryService]])
+        {
+            // Battery Serviceサービスを発見した場合、Battery Levelキャラクタリスティックの探索を開始
             [peripheral discoverCharacteristics:[NSArray arrayWithObjects:[CBUUID UUIDWithString:kUUIDCharacteristicsBatteryLevel], nil] forService:service];
         } 
     }
@@ -176,24 +205,34 @@ didDiscoverServices:(NSError *)error
 didDiscoverCharacteristicsForService:(CBService *)service 
              error:(NSError *)error
 {
-    if (error) {
+    if (error)
+    {
         NSLog(@"didDiscoverCharacteristics error: %@", error.localizedDescription);
         return;
     }
     
-    if (service.characteristics.count == 0) {
+    if (service.characteristics.count == 0)
+    {
         NSLog(@"didDiscoverCharacteristics no characteristics");
         return;
     }
     
     NSLog(@"didDiscoverCharacteristics %@", [service.characteristics description]);
 
-    for (CBCharacteristic *characteristic in service.characteristics) {
-        if ([characteristic.UUID isEqual:[CBUUID UUIDWithString:kUUIDCharacteristicsAlertLevel]]) {
+    for (CBCharacteristic *characteristic in service.characteristics)
+    {
+        if ([characteristic.UUID isEqual:[CBUUID UUIDWithString:kUUIDCharacteristicsAlertLevel]])
+        {
+            // Alert Levelキャラクタリスティックオブジェクトへの参照を保管
             alertLevelCharacteristic = characteristic;
+            // 外部デバイス鳴動指示準備完了を通知
             [self.delegate notifyAlertReady];
-        } else if ([characteristic.UUID isEqual:[CBUUID UUIDWithString:kUUIDCharacteristicsBatteryLevel]]) {
+        }
+        else if ([characteristic.UUID isEqual:[CBUUID UUIDWithString:kUUIDCharacteristicsBatteryLevel]])
+        {
+            // Battery Levelキャラクタリスティックオブジェクトへの参照を保管
             batteryLevelCharacteristic = characteristic;
+            // 外部デバイスバッテリー情報取得準備完了を通知
             [self.delegate checkBatteryReady];
         }
     }
@@ -203,20 +242,23 @@ didDiscoverCharacteristicsForService:(CBService *)service
 didUpdateValueForCharacteristic:(CBCharacteristic *)characteristic 
              error:(NSError *)error
 {
-    if (error) {
+    if (error)
+    {
         NSLog(@"didUpdateValueForCharacteristic error: %@", error.localizedDescription);
         return;
     }
     
     NSLog(@"didUpdateValueForCharacteristic");
     
-    if ([characteristic isEqual:batteryLevelCharacteristic]) {
-        int intValue;
+    if ([characteristic isEqual:batteryLevelCharacteristic])
+    {
+        // バッテリー情報の値を取得
+        ushort value;
         NSMutableData *data = [NSMutableData dataWithData:characteristic.value];
-        [data increaseLengthBy:24];
-        [data getBytes:&intValue length:sizeof(intValue)];
-        
-        [self.delegate didCheckBattery:intValue];
+        [data increaseLengthBy:8];
+        [data getBytes:&value length:sizeof(value)];
+        // バッテリー情報取得完了を通知
+        [self.delegate didCheckBattery:value];
     }
 }
 

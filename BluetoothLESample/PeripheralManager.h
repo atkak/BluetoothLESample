@@ -12,11 +12,16 @@
 @protocol PeripheralManagerDelegate <NSObject>
 
 @optional
+// 外部デバイスへの接続完了時に呼ばれる
 - (void)didConnectPeripheral;
+// 外部デバイスとの接続の切断時に呼ばれる
 - (void)didDisconnectPeripheral;
+// 外部デバイスの鳴動指示が利用可能になった時に呼ばれる
 - (void)notifyAlertReady;
+// 外部デバイスのバッテリー情報取得が利用可能になった時に呼ばれる
 - (void)checkBatteryReady;
-- (void)didCheckBattery:(int)value;
+// 外部でバイスのバッテリー情報取得完了時に呼ばれる
+- (void)didCheckBattery:(ushort)value;
 
 @end
 
@@ -25,7 +30,7 @@
 @property (nonatomic, strong) id<PeripheralManagerDelegate> delegate;
 @property (nonatomic, readonly) NSString *deviceName;
 
-- (void)scanForPeripherals;
+- (void)scanForPeripheralsAndConnect;
 - (void)notifyAlert;
 - (void)checkBattery;
 
