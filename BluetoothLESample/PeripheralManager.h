@@ -3,25 +3,26 @@
 //  BluetoothLETest
 //
 //  Created by 敦史 掛川 on 12/05/21.
-//  Copyright (c) 2012年 __MyCompanyName__. All rights reserved.
+//  Copyright (c) 2012年 Classmethod Inc. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
 #import <CoreBluetooth/CoreBluetooth.h>
+@class PeripheralManager;
 
 @protocol PeripheralManagerDelegate <NSObject>
-
 @optional
 // 外部デバイスへの接続完了時に呼ばれる
-- (void)didConnectPeripheral;
+- (void)peripheralManagerDidConnectPeripheral:(PeripheralManager *)manager;
 // 外部デバイスとの接続の切断時に呼ばれる
-- (void)didDisconnectPeripheral;
+- (void)peripheralManagerDidDisconnectPeripheral:(PeripheralManager *)manager;
 // 外部デバイスの鳴動指示が利用可能になった時に呼ばれる
-- (void)notifyAlertReady;
+- (void)peripheralManagerNotifyAlertReady:(PeripheralManager *)manager;
 // 外部デバイスのバッテリー情報取得が利用可能になった時に呼ばれる
-- (void)checkBatteryReady;
+- (void)peripheralManagerCheckBatteryReady:(PeripheralManager *)manager;
 // 外部でバイスのバッテリー情報取得完了時に呼ばれる
-- (void)didCheckBattery:(ushort)value;
+- (void)peripheralManager:(PeripheralManager *)manager
+          didCheckBattery:(ushort)value;
 
 @end
 

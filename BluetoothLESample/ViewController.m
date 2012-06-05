@@ -3,13 +3,13 @@
 //  BluetoothLESample
 //
 //  Created by 敦史 掛川 on 12/05/21.
-//  Copyright (c) 2012年 __MyCompanyName__. All rights reserved.
+//  Copyright (c) 2012年 Classmethod Inc. All rights reserved.
 //
 
 #import "ViewController.h"
 
 @interface ViewController () {
-    PeripheralManager *manager;
+    PeripheralManager *peripheralManager;
 }
 
 @end
@@ -48,12 +48,12 @@
 
 #pragma mark - PefipheralManagerDelegate methods
 
-- (void)didConnectPeripheral
+- (void)peripheralManagerDidConnectPeripheral:(PeripheralManager *)manager
 {
     self.label.text = [NSString stringWithFormat:@"接続中:%@", manager.deviceName];
 }
 
-- (void)didDisconnectPeripheral
+- (void)peripheralManagerDidDisconnectPeripheral:(PeripheralManager *)manager
 {
     self.label.text = @"未接続";
     self.connectButton.enabled = YES;
@@ -61,17 +61,18 @@
     self.batteryButton.enabled = NO;
 }
 
-- (void)notifyAlertReady
+- (void)peripheralManagerNotifyAlertReady:(PeripheralManager *)manager
 {
     self.alertButton.enabled = YES;
 }
 
-- (void)checkBatteryReady
+- (void)peripheralManagerCheckBatteryReady:(PeripheralManager *)manager
 {
     self.batteryButton.enabled = YES;
 }
 
-- (void)didCheckBattery:(ushort)value
+- (void)peripheralManager:(PeripheralManager *)manager
+          didCheckBattery:(ushort)value
 {
     // 接続デバイスのバッテリー残量をアラートで表示
     UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"バッテリー残量" 
@@ -90,23 +91,23 @@
     self.connectButton.enabled = NO;
     self.label.text = @"検索中";
     // Bluetoothデバイスのマネージャーを作成
-    manager = [[PeripheralManager alloc] init];
-    manager.delegate = self;
+    peripheralManager = [[PeripheralManager alloc] init];
+    peripheralManager.delegate = self;
     // デバイスのスキャンと接続を開始
-    [manager scanForPeripheralsAndConnect];
+    [peripheralManager scanForPeripheralsAndConnect];
 }
 
 // アラートボタンタップイベントハンドラ
 - (IBAction)alertButtonTouched:(id)sender
 {
     // 接続デバイスを鳴動させる
-    [manager notifyAlert];
+    [peripheralManager notifyAlert];
 }
 
 // バッテリーチェックボタンタップイベントハンドラ
 - (IBAction)batteryButtonTouched:(id)sender
 {
     // 接続デバイスのバッテリー情報を取得
-    [manager checkBattery];
+    [peripheralManager checkBattery];
 }
 @end

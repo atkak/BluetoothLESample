@@ -134,6 +134,7 @@
 			isa = PBXProject;
 			attributes = {
 				LastUpgradeCheck = 0430;
+				ORGANIZATIONNAME = "Classmethod Inc.";
 			};
 			buildConfigurationList = 0891A22D156A898500F3FA13 /* Build configuration list for PBXProject "BluetoothLESample" */;
 			compatibilityVersion = "Xcode 3.2";
@@ -284,6 +285,7 @@
 				0891A253156A898500F3FA13 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

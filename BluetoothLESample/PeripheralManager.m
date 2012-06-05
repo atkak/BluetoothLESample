@@ -3,7 +3,7 @@
 //  BluetoothLETest
 //
 //  Created by 敦史 掛川 on 12/05/21.
-//  Copyright (c) 2012年 __MyCompanyName__. All rights reserved.
+//  Copyright (c) 2012年 Classmethod Inc. All rights reserved.
 //
 
 #import "PeripheralManager.h"
@@ -110,7 +110,7 @@ NSString *kUUIDCharacteristicsBatteryLevel = @"2A19";
     NSLog(@"didConnectPeripheral");
     
     // 外部デバイスとの接続完了を通知
-    [self.delegate didConnectPeripheral];
+    [self.delegate peripheralManagerDidConnectPeripheral:self];
     
     // 探索するサービスを指定
     NSArray *services = [NSArray arrayWithObjects:[CBUUID UUIDWithString:kUUIDServiceImmediateAlert], 
@@ -132,7 +132,7 @@ didDisconnectPeripheral:(CBPeripheral *)peripheral
 {
     NSLog(@"didDisconnectPeripheral %@", [error localizedDescription]);
     
-    [self.delegate didDisconnectPeripheral];
+    [self.delegate peripheralManagerDidDisconnectPeripheral:self];
 }
 
 - (void)centralManagerDidUpdateState:(CBCentralManager *)central
@@ -226,14 +226,14 @@ didDiscoverCharacteristicsForService:(CBService *)service
             // Alert Levelキャラクタリスティックオブジェクトへの参照を保管
             alertLevelCharacteristic = characteristic;
             // 外部デバイス鳴動指示準備完了を通知
-            [self.delegate notifyAlertReady];
+            [self.delegate peripheralManagerNotifyAlertReady:self];
         }
         else if ([characteristic.UUID isEqual:[CBUUID UUIDWithString:kUUIDCharacteristicsBatteryLevel]])
         {
             // Battery Levelキャラクタリスティックオブジェクトへの参照を保管
             batteryLevelCharacteristic = characteristic;
             // 外部デバイスバッテリー情報取得準備完了を通知
-            [self.delegate checkBatteryReady];
+            [self.delegate peripheralManagerCheckBatteryReady:self];
         }
     }
 }
@@ -258,7 +258,7 @@ didUpdateValueForCharacteristic:(CBCharacteristic *)characteristic
         [data increaseLengthBy:8];
         [data getBytes:&value length:sizeof(value)];
         // バッテリー情報取得完了を通知
-        [self.delegate didCheckBattery:value];
+        [self.delegate peripheralManager:self didCheckBattery:value];
     }
 }
 
